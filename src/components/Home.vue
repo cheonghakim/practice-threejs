@@ -8,11 +8,13 @@
 <script>
 import * as THREE from "three";
 import { Stats } from "../libs/stats";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
 export default {
   data: () => ({}),
   mounted() {
-    this.test();
+    // this.firstScene();
+    this.orbit();
   },
   methods: {
     setup() {
@@ -161,6 +163,97 @@ export default {
 
         return stats;
       }
+    },
+    firstScene() {
+      //create scene, camera, renderer
+      let scene = new THREE.Scene();
+      let camera = new THREE.PerspectiveCamera(
+        45,
+        window.innerWidth / window.innerHeight,
+        0.1,
+        1000
+      );
+      let renderer = new THREE.WebGLRenderer();
+      //set renderer
+      //   renderer.setClearColorHex();
+      renderer.setClearColor(0xeeeeee, 1);
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      const axes = new THREE.AxisHelper(20);
+      //add axis at the scene
+      scene.add(axes);
+      //create plane model
+      const planeGeometry = new THREE.PlaneGeometry(60, 20);
+      const planeMaterial = new THREE.MeshBasicMaterial({ color: 0xcccccc });
+      let plane = new THREE.Mesh(planeGeometry, planeMaterial);
+      //set position
+      plane.rotation.x = -0.5 * Math.PI;
+      plane.position.x = 15;
+      plane.position.y = 0;
+      plane.position.z = 0;
+      scene.add(plane);
+
+      const cubeGeometry = new THREE.BoxGeometry(4, 4, 4);
+      const cubeMaterial = new THREE.MeshBasicMaterial({
+        color: 0xff0000,
+        wireframe: true,
+      });
+      let cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+
+      cube.position.x = -4;
+      cube.position.y = 3;
+      cube.position.z = 0;
+      scene.add(cube);
+
+      camera.position.x = -30;
+      camera.position.y = 40;
+      camera.position.z = 30;
+      camera.lookAt(scene.position);
+
+      const dom = document.getElementById("WebGL-output");
+      if (dom) {
+        dom.appendChild(renderer.domElement);
+      }
+      //   let controls = new OrbitControls(camera, renderer.domElement);
+      //   controls.update();
+      renderer.render(scene, camera);
+    },
+    orbit() {
+      let scene = new THREE.Scene();
+      let camera = new THREE.PerspectiveCamera(
+        70,
+        window.innerWidth / window.innerHeight,
+        0.2,
+        10
+      );
+
+      let renderer = new THREE.WebGLRenderer();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      document.body.appendChild(renderer.domElement);
+
+      const cubeGeometry = new THREE.BoxGeometry(4, 4, 4);
+      const cubeMaterial = new THREE.MeshBasicMaterial({
+        color: 0xff0000,
+        wireframe: false,
+      });
+      let cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+      scene.add(cube);
+      camera.position.z = 7;
+
+      // 카메라와 마우스 상호작용을 위해 OrbitControls를 설정합니다.
+      let controls = new OrbitControls(camera, renderer.domElement);
+      controls.rotateSpeed = 1.2;
+      controls.zoomSpeed = 1.2;
+      controls.panSpeed = 0.8;
+      controls.minDistance = 5;
+      controls.maxDistance = 100;
+
+      function animate() {
+        requestAnimationFrame(animate);
+        renderer.render(scene, camera);
+        controls.update(); // 마우스로인해 변경된 카메라값을 업데이트 합니다.
+      }
+
+      animate();
     },
   },
 };
