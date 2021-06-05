@@ -1,7 +1,5 @@
 <template>
   <div>
-    <div id="info" class="text">INFO</div>
-
     <div id="Stats-output"></div>
     <div id="WebGL-output"></div>
   </div>
